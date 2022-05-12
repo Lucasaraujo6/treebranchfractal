@@ -7,9 +7,9 @@ public class Desenho extends Canvas {
 
     private Ponto pontoFinal;
     private double altura;
-    private int nivel = 15;
+    private int nivel = 3;
     private int tamanho = getTamanho();
-    private Galho galhos = new Galho(tamanho);
+    private Galho galhos[] = new Galho[tamanho];
 
     @Override
     public void paint(Graphics g) {
@@ -35,12 +35,44 @@ public class Desenho extends Canvas {
         g.setColor(Color.BLACK);
 
         // g.fillPolygon(vx,vy,3);
-        
+
         // criaTriangRec(g, largura/4, altura/2, 3*largura/4, altura/2, largura/2,
         // altura);
-        g.drawLine((int) (largura / 2), (int) (altura), (int) (largura / 2), (int) (altura * 3 / 4));
+        // g.drawLine((int) (largura / 2), (int) (altura), (int) (largura / 2), (int)
+        // (altura * 3 / 4));
         criaLinha(g, ponto, Math.PI / 2, altura / 2, nivel);
+        System.out.println("reordenate n funfa");
+        // galhos[0] = (new Galho((int) (largura / 2), (int) (altura), (int) (largura /
+        // 2), (int) (altura * 3 / 4), 0));
+        add(new Galho((int) (largura / 2), (int) (altura), (int) (largura / 2), (int) (altura * 3 / 4), nivel + 1));
+        reordenate();
+        print();
+        drawTree(g);
+    }
 
+    private void drawTree(Graphics g) {
+        int redTone = (int) ((-102) / nivel);
+        int greenTone = (int) ((255 - 51) / nivel);
+        // int blueTone = (int) ((-102) / tamanho);
+        for (int i = 0; i < galhos.length; i++) {
+            // System.out.println(i);
+            try {
+                g.setColor(
+                        new Color(102 + redTone * (nivel - galhos[i].nivel), 51 + greenTone * (nivel - galhos[i].nivel),
+                                0));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // System.out.println((redTone + " " + i + "green=> " + greenTone + " " + i));
+            // System.out.println(g.getColor());
+            g.drawLine(galhos[i].x1, galhos[i].y1, galhos[i].x2, galhos[i].y2);
+
+            // try {
+            // Thread.sleep(1);
+            // } catch (InterruptedException e) {
+            // e.printStackTrace();
+            // }
+        }
     }
 
     private void criaLinha(Graphics g, Ponto pontoDeContatoPai, double angInclinacaoPai, double tamanhoPai,
@@ -74,30 +106,32 @@ public class Desenho extends Canvas {
 
         double tamanhoAtual = tamanhoPai * 60 / 100;
 
-        try {
-            Thread.sleep(0);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        // try {
+        // Thread.sleep(0);
+        // } catch (InterruptedException e) {
+        // e.printStackTrace();
+        // }
 
         pontoFinal = new Ponto(tamanhoAtual * Math.cos(angleUp) +
                 pontoDeContatoPai.x,
                 tamanhoAtual * Math.sin(angleUp) + pontoDeContatoPai.y);
         g.setColor(Color.RED);
-        g.drawLine((int) pontoDeContatoPai.x, (int) (altura - pontoDeContatoPai.y), (int) pontoFinal.x,
-                (int) (altura - pontoFinal.y));
-        galhos.add(new Galho((int) pontoDeContatoPai.x, (int) (altura - pontoDeContatoPai.y), (int) pontoFinal.x,
-                (int) (altura - pontoFinal.y), nivel));
+        // g.drawLine((int) pontoDeContatoPai.x, (int) (altura - pontoDeContatoPai.y),
+        // (int) pontoFinal.x,
+        // (int) (altura - pontoFinal.y));
+        add(new Galho((int) pontoDeContatoPai.x, (int) (altura - pontoDeContatoPai.y), (int) pontoFinal.x,
+                (int) (altura - pontoFinal.y), contador));
 
         criaLinha(g, pontoFinal, angleUp, tamanhoAtual, contador - 1);
 
         pontoFinal = new Ponto(tamanhoAtual * Math.cos(angleDown) + pontoDeContatoPai.x,
                 tamanhoAtual * Math.sin(angleDown) + pontoDeContatoPai.y);
         g.setColor(Color.BLACK);
-        g.drawLine((int) pontoDeContatoPai.x, (int) (altura - pontoDeContatoPai.y), (int) pontoFinal.x,
-                (int) (altura - pontoFinal.y));
-        galhos.add(new Galho((int) pontoDeContatoPai.x, (int) (altura - pontoDeContatoPai.y), (int) pontoFinal.x,
-        (int) (altura - pontoFinal.y), nivel));
+        // g.drawLine((int) pontoDeContatoPai.x, (int) (altura - pontoDeContatoPai.y),
+        // (int) pontoFinal.x,
+        // (int) (altura - pontoFinal.y));
+        add(new Galho((int) pontoDeContatoPai.x, (int) (altura - pontoDeContatoPai.y), (int) pontoFinal.x,
+                (int) (altura - pontoFinal.y), contador));
         criaLinha(g, pontoFinal, angleDown, tamanhoAtual, contador - 1);
 
         // double tamanho =
@@ -149,6 +183,18 @@ public class Desenho extends Canvas {
 
     };
 
+    public void print() {
+        for (int i = 0; i < galhos.length; i++) {
+            // System.out.println(i);
+
+            if (this.galhos != null && galhos[i] != null) {
+                // System.out.println(i + " " + galhos[i].nivel);
+                // System.out.println("Cheguei aqui" + this.galhos[i].nivel);
+            }
+        }
+
+    }
+
     public class Ponto {
         private double x;
         private double y;
@@ -172,12 +218,35 @@ public class Desenho extends Canvas {
         }
     }
 
-    public int getTamanho() {
-        for (int i = 0; i < nivel; i++) {
-            tamanho += Math.pow(2, nivel);
+    public void add(Galho galho) {
+        // quando eu insiro o primeiro valor como galho[0] =... ele buga
+        for (int i = 0; i < galhos.length; i++) {
+            if (galhos[i] == null) {
+                galhos[i] = galho;
+                break;
+            }
         }
-        ;
-        System.out.println(tamanho);
+    }
+
+    public void reordenate() {
+        for (int j = 0; j < galhos.length - 1; j++) {
+            int i = j;
+            // System.out.println("passei aqui1");
+            while (i >= 0 && galhos[i + 1] != null && galhos[i] != null && galhos[i].nivel < galhos[i + 1].nivel) {
+                Galho aux = galhos[i];
+                galhos[i] = galhos[i + 1];
+                galhos[i + 1] = aux;
+                // System.out.println("passei aqui2" + i);
+                i--;
+            }
+        }
+    }
+
+    public int getTamanho() {
+        for (int i = 0; i <= nivel; i++) {
+            tamanho += Math.pow(2, i);
+        }
+        // System.out.println(tamanho);
         return tamanho;
     }
 

@@ -7,7 +7,7 @@ public class Galho {
         this.y1 = y1;
         this.x2 = x2;
         this.y2 = y2;
-        this.nivel = 6;
+        this.nivel = nivel;
     }
 
     public Galho(int tamanho) {
@@ -15,13 +15,22 @@ public class Galho {
     }
 
     public void add(Galho galho) {
-        for (int i = 0; i < galhos.length; i++) {
-            if (galhos[i] == null) {
-                galhos[i] = galho;
-                break;
-                System.out.println("i = " + i + "nivel = " galho.nivel);
+        int i = 0;
+        if (galhos[i] == null) {
+            galhos[i] = galho;
+        } else if (galhos[i + 1] == null) {
+            galhos[i + 1] = galho;
+        } else {
+            i++;
+            while (galhos[i]!=null&&galhos[i].nivel < galhos[i - 1].nivel) {
+                Galho aux = galho;
+                galhos[i] = galhos[i - 1];
+                galhos[i - 1] = aux;
+                i++;
             }
         }
     }
+
+
 
 }
