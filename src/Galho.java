@@ -14,23 +14,4 @@ public class Galho {
         this.galhos = new Galho[tamanho];
     }
 
-    public void add(Galho galho) {
-        int i = 0;
-        if (galhos[i] == null) {
-            galhos[i] = galho;
-        } else if (galhos[i + 1] == null) {
-            galhos[i + 1] = galho;
-        } else {
-            i++;
-            while (galhos[i]!=null&&galhos[i].nivel < galhos[i - 1].nivel) {
-                Galho aux = galho;
-                galhos[i] = galhos[i - 1];
-                galhos[i - 1] = aux;
-                i++;
-            }
-        }
-    }
-
-
-
 }
